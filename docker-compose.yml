@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: library_app
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/usr/src/app
+    env_file: .env
+    depends_on:
+      - db
+    networks:
+      - library_app_network
+
+  db:
+    image: postgres:latest
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: library
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: '727a5a31'
+    volumes:
+      - library_data:/var/lib/postgresql/data
+    networks:
+      - library_app_network
+
+volumes:
+  library_data:
+
+networks:
+  library_app_network:
+    driver: bridge
